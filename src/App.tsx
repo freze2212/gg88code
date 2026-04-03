@@ -3,7 +3,9 @@ import { useEffect, useState } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 import './index.css'
 import './App.css'
+import AdminPage from './components/AdminPage'
 import StatusModal from './components/StatusModal'
+import { DEFAULT_PRIZE_OPTIONS, getConfiguredPrize } from './lib/prizeConfig'
 
 function App() {
   const [accountId, setAccountId] = useState('')
@@ -14,10 +16,8 @@ function App() {
   const [scale, setScale] = useState(1)
 
   const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
-  const prizeOptions = [
-    38, 68, 88, 138, 168, 188, 238, 268, 288, 338, 368, 388, 438, 468, 488, 538, 568, 588,
-    638, 668, 688, 738, 768, 788, 838, 868, 888,
-  ]
+  const isAdminRoute =
+    window.location.pathname === '/admin' || window.location.hash === '#/admin'
 
   useEffect(() => {
     const calculateScale = () => {
@@ -59,11 +59,14 @@ function App() {
 
     await new Promise((resolve) => window.setTimeout(resolve, 300))
 
-    const pointsAdded = prizeOptions[Math.floor(Math.random() * prizeOptions.length)]
+    const configuredPrize = getConfiguredPrize(trimmedAccount)
+    const pointsAdded =
+      configuredPrize ??
+      DEFAULT_PRIZE_OPTIONS[Math.floor(Math.random() * DEFAULT_PRIZE_OPTIONS.length)]
 
     setPopup({
       type: 'success',
-      message: `Chúc mừng, bạn nhận được ${pointsAdded.toLocaleString('vi-VN')} điểm !!`,
+      message: `Chúc mừng, bạn nhận được ${pointsAdded.toLocaleString('vi-VN')}K !!`,
     })
 
     setCaptchaToken(null)
@@ -74,6 +77,10 @@ function App() {
   }
 
   const closePopup = () => setPopup(null)
+
+  if (isAdminRoute) {
+    return <AdminPage />
+  }
 
   return (
     <>
