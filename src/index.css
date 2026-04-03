@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont,
+      'Helvetica Neue', sans-serif;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #0d1329;
+    color: #f5f7ff;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    /* Nền chính được xử lý trong .main-background (App.css) để tách riêng mobile / PC */
+    background-color: #0d1329;
+  }
+}

@@ -1,0 +1,270 @@
+.main-background {
+  width: 100%;
+  min-height: 100vh;
+}
+
+.main-background-mobile {
+  min-height: 100vh;
+}
+
+/* Breakpoints mobile custom */
+@media (max-width: 430px) {
+  .main-background-mobile {
+    min-height: 83vh;
+  }
+}
+
+@media (max-width: 414px) {
+  .main-background-mobile {
+    min-height: 80vh;
+  }
+}
+
+@media (max-width: 390px) {
+  .main-background-mobile {
+    min-height: 75vh;
+  }
+}
+
+@media (max-width: 375px) {
+  .main-background-mobile {
+    min-height: 72vh;
+  }
+}
+
+@media (max-width: 360px) {
+  .main-background-mobile {
+    min-height: 70vh;
+  }
+}
+
+
+/* Custom radio button */
+.custom-radio {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(0, 174, 238, 0.3);
+  border-radius: 50%;
+  background-color: transparent;
+  position: relative;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.custom-radio:checked {
+  border-color: #00aeee;
+}
+
+.custom-radio:checked::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #00aeee;
+}
+
+@media (min-width: 640px) {
+  .custom-radio {
+    width: 17px;
+    height: 17px;
+  }
+  .custom-radio:checked::after {
+    width: 9px;
+    height: 9px;
+  }
+}
+
+@media (min-width: 768px) {
+  .custom-radio {
+    width: 18px;
+    height: 18px;
+  }
+  .custom-radio:checked::after {
+    width: 10px;
+    height: 10px;
+  }
+}
+
+/* Logo float animation */
+@keyframes floatLogo {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float-logo {
+  animation: floatLogo 2.5s ease-in-out infinite;
+}
+
+/* Fade in animation cho text và icon */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in-up-delay-1 {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out 0.1s forwards;
+}
+
+.animate-fade-in-up-delay-2 {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out 0.2s forwards;
+}
+
+.animate-fade-in-up-delay-3 {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease-out 0.3s forwards;
+}
+
+.animate-fade-in-scale {
+  opacity: 0;
+  animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.animate-fade-in-scale-delay-1 {
+  opacity: 0;
+  animation: fadeInScale 0.5s ease-out 0.1s forwards;
+}
+
+.animate-fade-in-scale-delay-2 {
+  opacity: 0;
+  animation: fadeInScale 0.5s ease-out 0.2s forwards;
+}
+
+.animate-fade-in-scale-delay-3 {
+  opacity: 0;
+  animation: fadeInScale 0.5s ease-out 0.3s forwards;
+}
+
+/* Animation rung nghiêng ngả cho text - chữ đứng im, chỉ nghiêng */
+@keyframes textFloat {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+/* Animation nổi bật cho title modal - 2 nhịp */
+@keyframes titleModalFloat {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1) drop-shadow(0 0 0px rgba(255, 215, 0, 0));
+  }
+  50% {
+    transform: scale(1.08);
+    filter: brightness(1.3) drop-shadow(0 0 20px rgba(199, 169, 1, 0.8)) drop-shadow(0 0 40px rgba(255, 165, 0, 0.6));
+  }
+}
+
+.animate-title-modal {
+  animation: titleModalFloat 2s ease-in-out infinite !important;
+  will-change: transform, filter;
+}
+
+/* Animation hấp dẫn với float, scale và glow cho icon */
+@keyframes attractiveFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter: brightness(1);
+  }
+  25% {
+    transform: translateY(-4px) scale(1.02);
+    filter: brightness(1.1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.03);
+    filter: brightness(1.15);
+  }
+  75% {
+    transform: translateY(-4px) scale(1.02);
+    filter: brightness(1.1);
+  }
+}
+
+@keyframes attractiveFloatIcon {
+  0%, 100% {
+    transform: translateY(0) scale(1) rotate(0deg);
+    filter: brightness(1) drop-shadow(0 0 0px rgba(255, 106, 0, 0));
+  }
+  25% {
+    transform: translateY(-4px) scale(1.05) rotate(-2deg);
+    filter: brightness(1.15) drop-shadow(0 2px 4px rgba(255, 106, 0, 0.3));
+  }
+  50% {
+    transform: translateY(-6px) scale(1.08) rotate(0deg);
+    filter: brightness(1.2) drop-shadow(0 3px 6px rgba(255, 106, 0, 0.4));
+  }
+  75% {
+    transform: translateY(-4px) scale(1.05) rotate(2deg);
+    filter: brightness(1.15) drop-shadow(0 2px 4px rgba(255, 106, 0, 0.3));
+  }
+}
+
+.animate-gentle-shake {
+  animation: textFloat 2.5s ease-in-out infinite;
+}
+
+.animate-gentle-shake-delay-1 {
+  animation: textFloat 2.5s ease-in-out 0.4s infinite;
+}
+
+.animate-gentle-shake-delay-2 {
+  animation: textFloat 2.5s ease-in-out 0.8s infinite;
+}
+
+.animate-gentle-shake-delay-3 {
+  animation: textFloat 2.5s ease-in-out 1.2s infinite;
+}
+
+.animate-gentle-shake-icon {
+  animation: attractiveFloatIcon 2.5s ease-in-out infinite;
+}
+
+.animate-gentle-shake-icon-delay-1 {
+  animation: attractiveFloatIcon 2.5s ease-in-out 0.4s infinite;
+}
+
+.animate-gentle-shake-icon-delay-2 {
+  animation: attractiveFloatIcon 2.5s ease-in-out 0.8s infinite;
+}
