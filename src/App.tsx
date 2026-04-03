@@ -16,10 +16,14 @@ function App() {
   const [scale, setScale] = useState(1)
 
   const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
-  const isAdminRoute =
-    window.location.pathname === '/admin' || window.location.hash === '#/admin'
+  const isAdminRoute = window.location.hash === '#/admin'
 
   useEffect(() => {
+    if (window.location.pathname === '/admin' && window.location.hash !== '#/admin') {
+      window.location.replace(`${window.location.origin}/#/admin`)
+      return
+    }
+
     const calculateScale = () => {
       if (window.innerWidth < 768 && window.innerWidth < 421) {
         setScale(window.innerWidth / 421)
@@ -119,18 +123,26 @@ function App() {
             </a>
           </div>
           <div className="hidden md:block fixed top-6 right-8 z-20">
-            <a
-              href="https://gg88-cd-demo.pages.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="cursor-pointer"
-            >
+            <div className="flex items-center gap-3">
+              <a
+                href="/#/admin"
+                className="inline-flex h-11 items-center justify-center rounded-full bg-white/85 px-5 text-sm font-bold text-[#0a365f] shadow-[0_10px_24px_rgba(8,32,71,0.18)] transition hover:bg-white"
+              >
+                Admin
+              </a>
+              <a
+                href="https://gg88-cd-demo.pages.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cursor-pointer"
+              >
               <img
                 src="/home.webp"
                 alt="Home"
                 className="w-[140px] h-auto md:w-[212px] md:h-[48px] object-contain"
               />
-            </a>
+              </a>
+            </div>
           </div>
 
           <div
