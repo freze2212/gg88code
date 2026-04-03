@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+﻿import { useMemo, useState } from 'react'
 import type { FormEvent } from 'react'
 import type { AccountPrizeConfig } from '../lib/prizeConfig'
 import {
@@ -6,14 +6,12 @@ import {
   loadAdminUsername,
   loadPrizeConfigs,
   normalizeAccountId,
-  saveAdminPassword,
-  saveAdminUsername,
   savePrizeConfigs,
 } from '../lib/prizeConfig'
 
 function AdminPage() {
-  const [adminUsername, setAdminUsername] = useState(() => loadAdminUsername())
-  const [adminPassword, setAdminPassword] = useState(() => loadAdminPassword())
+  const [adminUsername] = useState(() => loadAdminUsername())
+  const [adminPassword] = useState(() => loadAdminPassword())
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [configs, setConfigs] = useState<AccountPrizeConfig[]>(() => loadPrizeConfigs())
   const [accountId, setAccountId] = useState('')
@@ -21,8 +19,6 @@ function AdminPage() {
   const [message, setMessage] = useState('')
   const [loginUsername, setLoginUsername] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
-  const [newPassword, setNewPassword] = useState('')
-  const [confirmPassword, setConfirmPassword] = useState('')
 
   const sortedConfigs = useMemo(() => {
     return [...configs].sort((left, right) => left.accountId.localeCompare(right.accountId))
@@ -40,42 +36,6 @@ function AdminPage() {
     setLoginUsername('')
     setLoginPassword('')
     setMessage('')
-  }
-
-  const handleChangePassword = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    if (!newPassword) {
-      setMessage('Vui lòng nhập mật khẩu admin mới.')
-      return
-    }
-
-    if (newPassword !== confirmPassword) {
-      setMessage('Mật khẩu nhập lại không khớp.')
-      return
-    }
-
-    saveAdminPassword(newPassword)
-    setAdminPassword(newPassword)
-    setNewPassword('')
-    setConfirmPassword('')
-    setMessage('Đã cập nhật mật khẩu admin.')
-  }
-
-  const handleChangeAdminAccount = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-
-    const normalizedUsername = loginUsername.trim()
-
-    if (!normalizedUsername) {
-      setMessage('Vui lòng nhập tài khoản admin mới.')
-      return
-    }
-
-    saveAdminUsername(normalizedUsername)
-    setAdminUsername(normalizedUsername)
-    setLoginUsername('')
-    setMessage('Đã cập nhật tài khoản admin.')
   }
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -126,6 +86,9 @@ function AdminPage() {
             Admin Login
           </p>
           <h1 className="mt-2 text-3xl font-black text-[#0a365f]">Đăng nhập admin</h1>
+          <p className="mt-2 text-sm text-[#40607c]">
+            Dùng tài khoản mặc định `admin` và mật khẩu `Admin123!`.
+          </p>
 
           <form onSubmit={handleLogin} className="mt-6 space-y-4">
             <label className="block">
@@ -220,9 +183,10 @@ function AdminPage() {
                 >
                   Lưu cấu hình
                 </button>
+
+                {message ? <p className="text-sm text-[#0a365f]">{message}</p> : null}
               </div>
             </form>
-
           </div>
 
           <div className="rounded-[28px] bg-white/90 p-6 shadow-[0_18px_50px_rgba(8,32,71,0.18)]">
@@ -259,8 +223,7 @@ function AdminPage() {
                 ))
               ) : (
                 <div className="rounded-2xl border border-dashed border-[#c8e6e2] bg-[#fbfffe] p-6 text-sm text-[#65809a]">
-                  Chưa có cấu hình nào. Tài khoản không có trong danh sách sẽ random thưởng mặc
-                  định.
+                  Chưa có cấu hình nào. Tài khoản không có trong danh sách sẽ random thưởng mặc định.
                 </div>
               )}
             </div>
