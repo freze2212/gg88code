@@ -86,9 +86,6 @@ function AdminPage() {
             Admin Login
           </p>
           <h1 className="mt-2 text-3xl font-black text-[#0a365f]">Đăng nhập admin</h1>
-          <p className="mt-2 text-sm text-[#40607c]">
-            Dùng tài khoản mặc định `admin` và mật khẩu `Admin123!`.
-          </p>
 
           <form onSubmit={handleLogin} className="mt-6 space-y-4">
             <label className="block">

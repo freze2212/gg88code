@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
 import './index.css'
 import './App.css'
-import AdminPage from './components/AdminPage'
 import StatusModal from './components/StatusModal'
 import { DEFAULT_PRIZE_OPTIONS, getConfiguredPrize } from './lib/prizeConfig'
 
@@ -16,14 +15,8 @@ function App() {
   const [scale, setScale] = useState(1)
 
   const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
-  const isAdminRoute = window.location.hash === '#/admin'
 
   useEffect(() => {
-    if (window.location.pathname === '/admin' && window.location.hash !== '#/admin') {
-      window.location.replace(`${window.location.origin}/#/admin`)
-      return
-    }
-
     const calculateScale = () => {
       if (window.innerWidth < 768 && window.innerWidth < 421) {
         setScale(window.innerWidth / 421)
@@ -82,10 +75,6 @@ function App() {
 
   const closePopup = () => setPopup(null)
 
-  if (isAdminRoute) {
-    return <AdminPage />
-  }
-
   return (
     <>
       <div className="relative min-h-screen">
@@ -123,26 +112,18 @@ function App() {
             </a>
           </div>
           <div className="hidden md:block fixed top-6 right-8 z-20">
-            <div className="flex items-center gap-3">
-              <a
-                href="/#/admin"
-                className="inline-flex h-11 items-center justify-center rounded-full bg-white/85 px-5 text-sm font-bold text-[#0a365f] shadow-[0_10px_24px_rgba(8,32,71,0.18)] transition hover:bg-white"
-              >
-                Admin
-              </a>
-              <a
-                href="https://gg88-cd-demo.pages.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="cursor-pointer"
-              >
+            <a
+              href="https://gg88-cd-demo.pages.dev"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cursor-pointer"
+            >
               <img
                 src="/home.webp"
                 alt="Home"
                 className="w-[140px] h-auto md:w-[212px] md:h-[48px] object-contain"
               />
-              </a>
-            </div>
+            </a>
           </div>
 
           <div
