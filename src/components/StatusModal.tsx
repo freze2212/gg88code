@@ -9,7 +9,7 @@ type StatusModalProps = {
 }
 
 function parseRewardAmount(message: string) {
-  const match = message.match(/(\d[\d.,]*)\s*K/i)
+  const match = message.match(/(\d[\d.,]*)/)
   return match?.[1] ?? '888'
 }
 
