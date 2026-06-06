@@ -1,0 +1,140 @@
+.status-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.status-modal-wrap {
+  container-type: inline-size;
+  width: min(844px, calc(100vw - 24px));
+  aspect-ratio: 844 / 475;
+  position: relative;
+  overflow: visible;
+  flex-shrink: 0;
+}
+
+.status-modal {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 844px;
+  height: 475px;
+  transform: translateX(-50%) scale(calc(100cqw / 844px));
+  transform-origin: top center;
+}
+
+.status-modal__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+}
+
+.status-modal__content {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  box-sizing: border-box;
+  padding: 44px 48px 52px;
+  gap: 32px;
+  text-align: center;
+}
+
+.status-modal__icon {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+}
+
+.status-modal__message {
+  margin: 0;
+  max-width: 90%;
+  font-family: 'SVN-Gilroy', 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.45;
+  color: #1f2431;
+}
+
+.status-modal__success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  text-align: center;
+  max-width: 92%;
+}
+
+.status-modal__success-line1 {
+  margin: 0;
+  font-family: 'SVN-Gilroy', 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.status-modal__success-heading {
+  font-weight: 700;
+  color: #008a3d;
+  text-transform: uppercase;
+}
+
+.status-modal__success-sub {
+  font-weight: 500;
+  color: #1a1d21;
+}
+
+.status-modal__success-reward {
+  margin: 0;
+  font-family: 'SVN-Gilroy', 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #ffea00 0%, #f7941d 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1.2px #7b2e00;
+  paint-order: stroke fill;
+}
+
+.status-modal__btn {
+  margin-top: 0;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  transition: filter 0.2s ease;
+}
+
+.status-modal__btn:hover {
+  filter: brightness(1.08);
+}
+
+.status-modal__btn-img {
+  width: 260px;
+  height: auto;
+  object-fit: contain;
+}
+
+@supports not (width: 1cqw) {
+  .status-modal {
+    transform: translateX(-50%) scale(calc((100vw - 24px) / 844));
+  }
+}
