@@ -6,7 +6,8 @@ import './App.css'
 import StatusModal from './components/StatusModal'
 
 const ASSETS = '/event-wc'
-const HOME_URL = 'https://gg88-cd-demo.pages.dev'
+const HOME_URL_PC = 'https://gg88-cd.pages.dev/'
+const HOME_URL_MB = 'https://gg88-cd-link-mb.pages.dev/'
 const LAYOUT_WIDTH = 1645
 const LAYOUT_HEIGHT_FALLBACK = 808
 
@@ -159,6 +160,7 @@ function App() {
   }
 
   const closePopup = () => setPopup(null)
+  const homeUrl = isMobile ? HOME_URL_MB : HOME_URL_PC
 
   return (
     <>
@@ -185,8 +187,15 @@ function App() {
         </video>
 
         <header className="site-header">
-          <img src={`${ASSETS}/logo.png`} alt="GG88" className="site-header__logo" />
-          <a href={HOME_URL} target="_blank" rel="noopener noreferrer" className="site-header__home-link">
+          <a
+            href={homeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="site-header__logo-link"
+          >
+            <img src={`${ASSETS}/logo.png`} alt="GG88" className="site-header__logo" />
+          </a>
+          <a href={homeUrl} target="_blank" rel="noopener noreferrer" className="site-header__home-link">
             <img src={`${ASSETS}/btn-home.png`} alt="Trang chủ" className="site-header__home" />
           </a>
         </header>

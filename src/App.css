@@ -45,6 +45,16 @@
   border-bottom: 2px solid #0a5a43;
 }
 
+.site-header__logo-link {
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s ease;
+}
+
+.site-header__logo-link:hover {
+  opacity: 0.88;
+}
+
 .site-header__logo {
   height: 48px;
   width: auto;
