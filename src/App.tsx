@@ -8,6 +8,38 @@ import StatusModal from './components/StatusModal'
 const ASSETS = '/event-wc'
 const HOME_URL_PC = 'https://gg88-cd.pages.dev/'
 const HOME_URL_MB = 'https://gg88-cd-link-mb.pages.dev/'
+const PROMO_BANNERS = [
+  {
+    src: `${ASSETS}/km-1.png`,
+    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=14&eventId=258',
+    label: 'X88',
+  },
+  {
+    src: `${ASSETS}/km-2.png`,
+    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=12&eventId=234',
+    label: 'WC01',
+  },
+  {
+    src: `${ASSETS}/km-3.png`,
+    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=24&eventId=259',
+    label: 'TOPTT',
+  },
+  {
+    src: `${ASSETS}/km-4.png`,
+    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=1&eventId=262',
+    label: 'BH100',
+  },
+  {
+    src: `${ASSETS}/km-5.png`,
+    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=1&eventId=266',
+    label: 'WCNT',
+  },
+  {
+    src: `${ASSETS}/km-6.png`,
+    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=1&eventId=254',
+    label: 'DDWC',
+  },
+] as const
 const LAYOUT_WIDTH = 1645
 const LAYOUT_HEIGHT_FALLBACK = 808
 
@@ -328,16 +360,23 @@ function App() {
               </div>
 
               <div className="bottom-banner">
-                <img
-                  src={`${ASSETS}/banner.png`}
-                  alt="Banner sự kiện"
-                  className="bottom-banner__img bottom-banner__img--pc"
-                />
-                <img
-                  src={`${ASSETS}/banner-mb.png`}
-                  alt="Banner sự kiện"
-                  className="bottom-banner__img bottom-banner__img--mb"
-                />
+                <div className="bottom-banner__grid">
+                  {PROMO_BANNERS.map((banner) => (
+                    <a
+                      key={banner.src}
+                      href={banner.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="bottom-banner__link"
+                    >
+                      <img
+                        src={banner.src}
+                        alt={`Khuyến mãi ${banner.label}`}
+                        className="bottom-banner__item"
+                      />
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
