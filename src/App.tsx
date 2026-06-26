@@ -4,6 +4,7 @@ import { Turnstile } from '@marsidev/react-turnstile'
 import './index.css'
 import './App.css'
 import StatusModal from './components/StatusModal'
+import { DEFAULT_PRIZE_OPTIONS, getConfiguredPrize } from './lib/prizeConfig'
 
 const ASSETS = '/event-wc'
 const HOME_URL_PC = 'https://gg88-cd.pages.dev/'
@@ -45,19 +46,6 @@ const LAYOUT_HEIGHT_FALLBACK = 808
 
 const MOBILE_BREAKPOINT = 768
 
-type UseCodeErrorResponse = {
-  data?: { message?: string }
-  message?: string
-}
-
-type UseCodeSuccessResponse = {
-  data?: {
-    pointsAdded?: number
-    message?: string
-  }
-  message?: string
-}
-
 function App() {
   const [accountId, setAccountId] = useState('')
   const [code, setCode] = useState('')
@@ -71,7 +59,6 @@ function App() {
   const [layoutHeight, setLayoutHeight] = useState(LAYOUT_HEIGHT_FALLBACK)
   const layoutRef = useRef<HTMLDivElement>(null)
 
-  const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string) ?? ''
   const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
 
   useEffect(() => {
@@ -143,52 +130,23 @@ function App() {
 
     setIsLoading(true)
 
-    try {
-      const response = await fetch(`${API_BASE_URL}/codes/use-code-public`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: trimmedAccount.toLowerCase(),
-          code: trimmedCode,
-          captchaToken,
-        }),
-      })
+    await new Promise((resolve) => window.setTimeout(resolve, 300))
 
-      if (!response.ok) {
-        let errorMessage = 'Sử dụng code thất bại. Vui lòng thử lại.'
-        try {
-          const errorData = (await response.json()) as UseCodeErrorResponse
-          if (errorData?.data?.message) {
-            errorMessage = errorData.data.message
-          } else if (errorData?.message) {
-            errorMessage = errorData.message
-          }
-        } catch {
-          // ignore parse errors
-        }
-        throw new Error(errorMessage)
-      }
+    const configuredPrize = getConfiguredPrize(trimmedAccount)
+    const pointsAdded =
+      configuredPrize ??
+      DEFAULT_PRIZE_OPTIONS[Math.floor(Math.random() * DEFAULT_PRIZE_OPTIONS.length)]
 
-      const responseData = (await response.json()) as UseCodeSuccessResponse
-      const pointsAdded = responseData.data?.pointsAdded ?? 0
-      const successMessage = `Chúc mừng, bạn nhận được ${pointsAdded.toLocaleString('vi-VN')}K !!`
+    setPopup({
+      type: 'success',
+      message: `Chúc mừng, bạn nhận được ${pointsAdded.toLocaleString('vi-VN')}K !!`,
+    })
 
-      setPopup({
-        type: 'success',
-        message: successMessage,
-      })
-      setCaptchaToken(null)
-    } catch (error) {
-      setPopup({
-        type: 'error',
-        message:
-          error instanceof Error ? error.message : 'Sử dụng code thất bại. Vui lòng thử lại.',
-      })
-    } finally {
-      setIsLoading(false)
-    }
+    setCaptchaToken(null)
+    setIsLoading(false)
+    window.setTimeout(() => {
+      window.location.reload()
+    }, 1200)
   }
 
   const closePopup = () => setPopup(null)
