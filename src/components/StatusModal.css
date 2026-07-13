@@ -12,8 +12,8 @@
 
 .status-modal-wrap {
   container-type: inline-size;
-  width: min(844px, calc(100vw - 24px));
-  aspect-ratio: 844 / 475;
+  width: min(612px, calc(100vw - 24px));
+  aspect-ratio: 612 / 637;
   position: relative;
   overflow: visible;
   flex-shrink: 0;
@@ -23,9 +23,9 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 844px;
-  height: 475px;
-  transform: translateX(-50%) scale(calc(100cqw / 844px));
+  width: 612px;
+  height: 637px;
+  transform: translateX(-50%) scale(calc(100cqw / 612px));
   transform-origin: top center;
 }
 
@@ -45,16 +45,16 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
+  justify-content: center;
   box-sizing: border-box;
-  padding: 44px 48px 52px;
-  gap: 32px;
+  padding: 120px 48px 64px;
+  gap: 24px;
   text-align: center;
 }
 
 .status-modal__icon {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
 }
 
@@ -63,17 +63,17 @@
   max-width: 90%;
   font-family: 'SVN-Gilroy', 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
     sans-serif;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 600;
   line-height: 1.45;
-  color: #1f2431;
+  color: #f0d77b;
 }
 
 .status-modal__success {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 18px;
+  gap: 14px;
   text-align: center;
   max-width: 92%;
 }
@@ -82,26 +82,26 @@
   margin: 0;
   font-family: 'SVN-Gilroy', 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
     sans-serif;
-  font-size: 24px;
+  font-size: 22px;
   line-height: 1.35;
 }
 
 .status-modal__success-heading {
   font-weight: 700;
-  color: #008a3d;
+  color: #f0d77b;
   text-transform: uppercase;
 }
 
 .status-modal__success-sub {
   font-weight: 500;
-  color: #1a1d21;
+  color: #ffffff;
 }
 
 .status-modal__success-reward {
   margin: 0;
   font-family: 'SVN-Gilroy', 'SF Pro Display', system-ui, -apple-system, BlinkMacSystemFont,
     sans-serif;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: 0.02em;
@@ -128,13 +128,13 @@
 }
 
 .status-modal__btn-img {
-  width: 260px;
+  width: 228px;
   height: auto;
   object-fit: contain;
 }
 
 @supports not (width: 1cqw) {
   .status-modal {
-    transform: translateX(-50%) scale(calc((100vw - 24px) / 844));
+    transform: translateX(-50%) scale(calc((100vw - 24px) / 612));
   }
 }

@@ -1,6 +1,7 @@
 import './StatusModal.css'
 
-const ASSETS = '/event-wc'
+const ASSETS_POPUP = '/event-2m'
+const ASSETS_ICONS = '/event-wc'
 
 type StatusModalProps = {
   type: 'success' | 'error'
@@ -37,21 +38,21 @@ function StatusModal({ type, message, onClose }: StatusModalProps) {
       <div className="status-modal-wrap">
         <div className="status-modal">
           <img
-            src={`${ASSETS}/bg-popup-wc.png`}
+            src={`${ASSETS_POPUP}/bg-popup.png`}
             alt=""
             className="status-modal__bg"
             aria-hidden
           />
           <div className="status-modal__content">
             <img
-              src={type === 'success' ? `${ASSETS}/icon-done.png` : `${ASSETS}/icon-alert.png`}
+              src={type === 'success' ? `${ASSETS_ICONS}/icon-done.png` : `${ASSETS_ICONS}/icon-alert.png`}
               alt={type === 'success' ? 'Thành công' : 'Lỗi'}
               className="status-modal__icon"
             />
             {renderMessage()}
             <button type="button" onClick={onClose} className="status-modal__btn">
               <img
-                src={`${ASSETS}/btn-accept.png`}
+                src={`${ASSETS_ICONS}/btn-accept.png`}
                 alt="Xác nhận"
                 className="status-modal__btn-img"
               />
