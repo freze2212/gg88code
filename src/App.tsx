@@ -1,348 +1,342 @@
-﻿import type { FormEvent } from 'react'
+﻿import type { FormEvent, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { Turnstile } from '@marsidev/react-turnstile'
+import { Toaster, toast } from 'sonner'
 import './index.css'
 import './App.css'
-import StatusModal from './components/StatusModal'
-import { DEFAULT_PRIZE_OPTIONS, getConfiguredPrize } from './lib/prizeConfig'
+import { getConfiguredPrize, getRandomPrizeK } from './lib/prizeConfig'
 
-const ASSETS = '/event-wc'
-const HOME_URL_PC = 'https://gg88-cd.pages.dev/'
-const HOME_URL_MB = 'https://gg88-cd-link-mb.pages.dev/'
-const PROMO_BANNERS = [
-  {
-    src: `${ASSETS}/km-1.png`,
-    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=14&eventId=258',
-    label: 'X88',
-  },
-  {
-    src: `${ASSETS}/km-2.png`,
-    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=12&eventId=234',
-    label: 'WC01',
-  },
-  {
-    src: `${ASSETS}/km-3.png`,
-    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=24&eventId=259',
-    label: 'TOPTT',
-  },
-  {
-    src: `${ASSETS}/km-4.png`,
-    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=1&eventId=262',
-    label: 'BH100',
-  },
-  {
-    src: `${ASSETS}/km-5.png`,
-    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=1&eventId=266',
-    label: 'WCNT',
-  },
-  {
-    src: `${ASSETS}/km-6.png`,
-    href: 'https://www.gg8809.com/home/event/detail?current=10011&template=1&eventId=254',
-    label: 'DDWC',
-  },
-] as const
-const LAYOUT_WIDTH = 1645
-const LAYOUT_HEIGHT_FALLBACK = 808
+const HOME_URL = 'https://gg88-cd-demo.pages.dev'
+const PROGRAM_INFO_URL = '#'
+const CODE_DISTRIBUTION_URL = 'https://t.me/code_gg88'
+const TELEGRAM_URL = 'https://t.me/GIAITRIGG88'
+const FACEBOOK_URL = 'https://www.facebook.com/congdonggg88vn/'
 
-const MOBILE_BREAKPOINT = 768
+const TURNSTILE_WIDTH = 300
+const TURNSTILE_HEIGHT = 65
+const SUCCESS_TOAST_DURATION_MS = 4000
+
+type FormErrors = { accountId?: string; code?: string; captcha?: string }
 
 function App() {
   const [accountId, setAccountId] = useState('')
   const [code, setCode] = useState('')
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const [popup, setPopup] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
-  const [isMobile, setIsMobile] = useState(
-    () => window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`).matches,
-  )
-  const [layoutScale, setLayoutScale] = useState(1)
-  const [layoutHeight, setLayoutHeight] = useState(LAYOUT_HEIGHT_FALLBACK)
-  const layoutRef = useRef<HTMLDivElement>(null)
+  const [errors, setErrors] = useState<FormErrors>({})
 
   const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
-    const updateIsMobile = () => setIsMobile(mediaQuery.matches)
-
-    updateIsMobile()
-    mediaQuery.addEventListener('change', updateIsMobile)
-    return () => mediaQuery.removeEventListener('change', updateIsMobile)
-  }, [])
-
-  useEffect(() => {
-    if (isMobile) return
-
-    const updateLayoutScale = () => {
-      const availableWidth = window.innerWidth - 96
-      setLayoutScale(Math.min(1, availableWidth / LAYOUT_WIDTH))
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      window.history.back()
+      return
     }
-
-    updateLayoutScale()
-    window.addEventListener('resize', updateLayoutScale)
-    return () => window.removeEventListener('resize', updateLayoutScale)
-  }, [isMobile])
-
-  useEffect(() => {
-    if (isMobile) return
-
-    const layoutEl = layoutRef.current
-    if (!layoutEl) return
-
-    const updateLayoutHeight = () => {
-      setLayoutHeight(layoutEl.scrollHeight || LAYOUT_HEIGHT_FALLBACK)
-    }
-
-    updateLayoutHeight()
-
-    const observer = new ResizeObserver(updateLayoutHeight)
-    observer.observe(layoutEl)
-
-    window.addEventListener('load', updateLayoutHeight)
-
-    return () => {
-      observer.disconnect()
-      window.removeEventListener('load', updateLayoutHeight)
-    }
-  }, [isMobile, layoutScale])
+    window.location.href = HOME_URL
+  }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    setPopup(null)
 
     const trimmedAccount = accountId.trim()
     const trimmedCode = code.trim()
 
-    if (!trimmedAccount) {
-      setPopup({ type: 'error', message: 'Vui lòng nhập tài khoản.' })
-      return
-    }
-
-    if (!trimmedCode) {
-      setPopup({ type: 'error', message: 'Vui lòng nhập mã CODE.' })
-      return
-    }
-
-    if (!captchaToken) {
-      setPopup({ type: 'error', message: 'Vui lòng hoàn thành xác thực bảo mật (Cloudflare).' })
-      return
-    }
+    const nextErrors: FormErrors = {}
+    if (!trimmedAccount) nextErrors.accountId = 'Vui lòng nhập tên tài khoản'
+    if (!trimmedCode) nextErrors.code = 'Vui lòng nhập mã code'
+    if (!captchaToken) nextErrors.captcha = 'Vui lòng xác thực captcha'
+    setErrors(nextErrors)
+    if (Object.keys(nextErrors).length || isLoading) return
 
     setIsLoading(true)
 
     await new Promise((resolve) => window.setTimeout(resolve, 300))
 
     const configuredPrize = getConfiguredPrize(trimmedAccount)
-    const pointsAdded =
-      configuredPrize ??
-      DEFAULT_PRIZE_OPTIONS[Math.floor(Math.random() * DEFAULT_PRIZE_OPTIONS.length)]
+    const pointsAdded = configuredPrize ?? getRandomPrizeK()
 
-    setPopup({
-      type: 'success',
-      message: `Chúc mừng, bạn nhận được ${pointsAdded.toLocaleString('vi-VN')}K !!`,
-    })
+    toast.success(
+      `Chúc mừng ${trimmedAccount} đã nhận thành công ${pointsAdded.toLocaleString('vi-VN')} điểm`,
+      { duration: SUCCESS_TOAST_DURATION_MS },
+    )
 
     setCaptchaToken(null)
-    setIsLoading(false)
     window.setTimeout(() => {
       window.location.reload()
-    }, 1200)
+    }, SUCCESS_TOAST_DURATION_MS)
   }
-
-  const closePopup = () => setPopup(null)
-  const homeUrl = isMobile ? HOME_URL_MB : HOME_URL_PC
 
   return (
     <>
-      <div className="page-wrapper">
-        <video
-          className="bg-video bg-video--mobile"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden
+      <div className="enter-code-page flex min-h-dvh justify-center bg-[#f0f0f0]">
+        <main
+          className="relative flex min-h-dvh w-full max-w-[440px] flex-col bg-[#C9F7F3] bg-no-repeat pb-8 shadow-[0_0_24px_rgba(0,0,0,0.06)]"
+          style={{
+            backgroundImage: "url('/images/backgrounds/background3.png')",
+            backgroundSize: '100% auto',
+          }}
         >
-          <source src={`${ASSETS}/bg-mb-wc.mp4`} type="video/mp4" />
-        </video>
-        <video
-          className="bg-video bg-video--desktop"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden
-        >
-          <source src={`${ASSETS}/bg-pc-wc.mp4`} type="video/mp4" />
-        </video>
-
-        <header className="site-header">
-          <a
-            href={homeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="site-header__logo-link"
-          >
-            <img src={`${ASSETS}/logo.png`} alt="GG88" className="site-header__logo" />
-          </a>
-          <a href={homeUrl} target="_blank" rel="noopener noreferrer" className="site-header__home-link">
-            <img src={`${ASSETS}/btn-home.png`} alt="Trang chủ" className="site-header__home" />
-          </a>
-        </header>
-
-        <main className="site-main">
-          <div
-            className={`layout-scaler-wrap${isMobile ? ' layout-scaler-wrap--mobile' : ''}`}
-            style={
-              isMobile
-                ? undefined
-                : {
-                    width: `${LAYOUT_WIDTH * layoutScale}px`,
-                    height: `${layoutHeight * layoutScale}px`,
-                  }
-            }
-          >
-            <div
-              ref={layoutRef}
-              className={`layout-scaler${isMobile ? ' layout-scaler--mobile' : ''}`}
-              style={
-                isMobile
-                  ? undefined
-                  : {
-                      width: `${LAYOUT_WIDTH}px`,
-                      transform: `scale(${layoutScale})`,
-                      transformOrigin: 'top left',
-                    }
-              }
-            >
-              <div className="content-row">
-                <div className="popup-panel-wrap">
-                  <div className="popup-panel">
-                    <img
-                      src={`${ASSETS}/bg-modal.png`}
-                      alt=""
-                      className="popup-panel__bg"
-                      aria-hidden
-                    />
-                    <img
-                      src={`${ASSETS}/text-title.png`}
-                      alt="NHẬP CODE FREE"
-                      className="form-title"
-                    />
-                    <form onSubmit={handleSubmit} className="popup-panel__form">
-                      <div className="form-field">
-                        <label htmlFor="accountId" className="form-label">
-                          Tên tài khoản:
-                        </label>
-                        <div className="form-input-wrap">
-                          <img
-                            src={`${ASSETS}/icon-user.png`}
-                            alt=""
-                            className="form-input-icon"
-                            aria-hidden
-                          />
-                          <input
-                            id="accountId"
-                            type="text"
-                            placeholder="Nhập tên người dùng"
-                            className="form-input"
-                            value={accountId}
-                            onChange={(e) => setAccountId(e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-field">
-                        <label htmlFor="code" className="form-label">
-                          Mã code:
-                        </label>
-                        <div className="form-input-wrap">
-                          <img
-                            src={`${ASSETS}/icon-promo.png`}
-                            alt=""
-                            className="form-input-icon"
-                            aria-hidden
-                          />
-                          <input
-                            id="code"
-                            type="text"
-                            placeholder="Nhập mã code"
-                            className="form-input"
-                            value={code}
-                            onChange={(e) => setCode(e.target.value)}
-                          />
-                        </div>
-                      </div>
-
-                      <div className="form-field">
-                        <div className="form-captcha">
-                          {TURNSTILE_SITE_KEY ? (
-                            <Turnstile
-                              siteKey={TURNSTILE_SITE_KEY}
-                              onSuccess={(token) => setCaptchaToken(token)}
-                              onExpire={() => setCaptchaToken(null)}
-                              options={{
-                                theme: 'light',
-                                size: 'normal',
-                                language: 'vi',
-                              }}
-                            />
-                          ) : (
-                            <span className="form-captcha-error">
-                              Thiếu cấu hình TURNSTILE_SITE_KEY
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      <button type="submit" disabled={isLoading} className="form-submit">
-                        <img
-                          src={`${ASSETS}/btn-get-code.png`}
-                          alt="Nhận code"
-                          className="form-submit__img"
-                        />
-                      </button>
-                    </form>
-                  </div>
+          <div className="flex w-full flex-col items-center px-2.5 pt-2">
+            <div className="relative w-full shrink-0">
+              <div className="flex items-center justify-between gap-3 px-1">
+                <div className="min-w-0 text-left leading-snug text-[#25C4AF]">
+                  <p className="text-[13px] font-medium">Đối tác chính thức</p>
+                  <p className="text-[16px] font-bold">Athletic Club</p>
+                  <p className="text-[13px] font-medium">Năm 2026-2027</p>
                 </div>
-
-                <div className="reward-panel-wrap">
-                  <div className="reward-panel">
-                    <img
-                      src={`${ASSETS}/banner-reward.png`}
-                      alt="Phần thưởng"
-                      className="reward-panel__img"
-                    />
-                  </div>
-                </div>
+                <img
+                  src="/images/logos/logo4.png"
+                  alt="Athletic Club — GG88"
+                  width={964}
+                  height={184}
+                  className="h-auto w-[54%] max-w-[240px] shrink-0 object-contain"
+                />
               </div>
-
-              <div className="bottom-banner">
-                <div className="bottom-banner__grid">
-                  {PROMO_BANNERS.map((banner) => (
-                    <a
-                      key={banner.src}
-                      href={banner.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="bottom-banner__link"
-                    >
-                      <img
-                        src={banner.src}
-                        alt={`Khuyến mãi ${banner.label}`}
-                        className="bottom-banner__item"
-                      />
-                    </a>
-                  ))}
-                </div>
-              </div>
+              <button
+                type="button"
+                onClick={handleBack}
+                aria-label="Quay lại"
+                className="absolute left-0.5 top-[calc(100%+0.25rem)] z-30 inline-flex size-9 cursor-pointer items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-transform active:scale-95"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="size-7"
+                  aria-hidden="true"
+                >
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+              </button>
             </div>
+
+            <img
+              src="/images/mascots/mascot3.png"
+              alt="Nhập code GG88 Free"
+              width={1448}
+              height={1268}
+              className="relative z-20 mt-4 h-auto w-[72%] shrink-0 object-contain object-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.28)]"
+            />
+
+            <form
+              onSubmit={handleSubmit}
+              className="enter-code-board relative z-10 -mt-4 w-[92%] px-5 pb-4 pt-5 text-center"
+            >
+              <Field
+                id="enter-code-account"
+                label="Tên tài khoản"
+                placeholder="Nhập tên người dùng"
+                value={accountId}
+                error={errors.accountId}
+                onChange={(value) => {
+                  setAccountId(value)
+                  setErrors((prev) => ({ ...prev, accountId: undefined }))
+                }}
+              />
+
+              <Field
+                id="enter-code-code"
+                label="Mã code"
+                placeholder="Nhập mã code"
+                value={code}
+                error={errors.code}
+                className="mt-3.5"
+                onChange={(value) => {
+                  setCode(value)
+                  setErrors((prev) => ({ ...prev, code: undefined }))
+                }}
+              />
+
+              <div className="mt-3.5 min-w-0">
+                {TURNSTILE_SITE_KEY ? (
+                  <ScaledTurnstile>
+                    <Turnstile
+                      siteKey={TURNSTILE_SITE_KEY}
+                      onSuccess={(token) => {
+                        setCaptchaToken(token)
+                        setErrors((prev) => ({ ...prev, captcha: undefined }))
+                      }}
+                      onExpire={() => setCaptchaToken(null)}
+                      onError={() => setCaptchaToken(null)}
+                      options={{
+                        theme: 'light',
+                        size: 'normal',
+                        language: 'vi',
+                      }}
+                    />
+                  </ScaledTurnstile>
+                ) : (
+                  <p className="text-center text-[11px] text-[#FFD0A8]">
+                    Thiếu cấu hình xác thực Turnstile
+                  </p>
+                )}
+                {errors.captcha ? (
+                  <p className="mt-1 text-center text-[11px] text-[#FFD0A8]">{errors.captcha}</p>
+                ) : null}
+              </div>
+
+              <button
+                type="submit"
+                disabled={isLoading}
+                aria-label="Kiểm tra"
+                className={`mx-auto mt-3 block transition-[transform,filter] duration-200 hover:brightness-110 active:scale-[0.97] ${
+                  isLoading ? 'pointer-events-none opacity-60' : ''
+                }`}
+              >
+                <img
+                  src="/images/buttons/button1.png"
+                  alt="KIỂM TRA"
+                  width={216}
+                  height={78}
+                  className="h-auto w-[180px]"
+                />
+              </button>
+
+              <div className="mt-4 flex flex-col items-center gap-2.5">
+                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+                  <InfoLink href={PROGRAM_INFO_URL}>Thông tin chương trình</InfoLink>
+                  <InfoLink href={CODE_DISTRIBUTION_URL} external>
+                    Trang phát code
+                  </InfoLink>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-[13px] font-bold text-[#F0D78C]">Theo dõi thêm:</span>
+                  <a
+                    href={TELEGRAM_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Telegram"
+                    className="transition-transform duration-200 hover:scale-110"
+                  >
+                    <img
+                      src="/images/icons/icon7.png"
+                      alt=""
+                      width={22}
+                      height={22}
+                      className="size-[22px] rounded-full"
+                    />
+                  </a>
+                  <a
+                    href={FACEBOOK_URL}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label="Facebook"
+                    className="transition-transform duration-200 hover:scale-110"
+                  >
+                    <img
+                      src="/images/icons/icon8.png"
+                      alt=""
+                      width={22}
+                      height={22}
+                      className="size-[22px] rounded-full"
+                    />
+                  </a>
+                </div>
+              </div>
+            </form>
           </div>
         </main>
       </div>
-
-      {popup && <StatusModal type={popup.type} message={popup.message} onClose={closePopup} />}
+      <Toaster position="top-center" richColors />
     </>
+  )
+}
+
+function Field({
+  id,
+  label,
+  placeholder,
+  value,
+  error,
+  className,
+  onChange,
+}: {
+  id: string
+  label: string
+  placeholder: string
+  value: string
+  error?: string
+  className?: string
+  onChange: (value: string) => void
+}) {
+  return (
+    <div className={className}>
+      <input
+        id={id}
+        aria-label={label}
+        value={value}
+        placeholder={placeholder}
+        autoComplete="off"
+        onChange={(event) => onChange(event.target.value)}
+        className={`h-10 w-full rounded-full bg-white px-4 text-center text-[16px] text-[#333] outline-none placeholder:text-[14px] placeholder:text-[#8FB4D0] focus:ring-2 focus:ring-[#E8C547]/80 ${
+          error ? 'ring-2 ring-[#FFB4A8]' : ''
+        }`}
+      />
+      {error ? <p className="mt-1 text-center text-[11px] text-[#FFD0A8]">{error}</p> : null}
+    </div>
+  )
+}
+
+function InfoLink({
+  href,
+  children,
+  external,
+}: {
+  href: string
+  children: ReactNode
+  external?: boolean
+}) {
+  return (
+    <a
+      href={href}
+      {...(external ? { target: '_blank', rel: 'noreferrer' } : {})}
+      className="inline-flex items-center gap-1 text-[12px] font-normal text-[#F0D78C] underline decoration-[#F0D78C] underline-offset-2 hover:text-[#ffe08a]"
+    >
+      {children}
+      <img src="/images/icons/icon6.png" alt="" width={14} height={14} className="size-3.5 shrink-0" />
+    </a>
+  )
+}
+
+/** Widget Turnstile cố định 300×65; khung hẹp hơn thì scale nhỏ lại thay vì bị cắt. */
+function ScaledTurnstile({ children }: { children: ReactNode }) {
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const [scale, setScale] = useState(1)
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+
+    const updateScale = (width: number) => {
+      if (width <= 0) return
+      setScale(Math.min(1, Math.max(0, width - 4) / TURNSTILE_WIDTH))
+    }
+
+    updateScale(el.getBoundingClientRect().width)
+    const observer = new ResizeObserver((entries) => {
+      updateScale(entries[0]?.contentRect.width ?? 0)
+    })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={wrapRef} className="relative w-full min-w-0">
+      <div style={{ height: Math.ceil(TURNSTILE_HEIGHT * scale) }} />
+      <div
+        className="absolute left-1/2 top-0"
+        style={{
+          width: TURNSTILE_WIDTH,
+          transform: `translateX(-50%) scale(${scale})`,
+          transformOrigin: 'top center',
+        }}
+      >
+        <div className="h-[65px] w-[300px]">{children}</div>
+      </div>
+    </div>
   )
 }
 

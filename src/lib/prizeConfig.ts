@@ -8,6 +8,39 @@ export const DEFAULT_PRIZE_OPTIONS = [
   668, 688, 738, 768, 788, 838, 868, 888,
 ]
 
+const DEFAULT_RANDOM_PRIZE_MIN_K = 88
+const DEFAULT_RANDOM_PRIZE_MAX_K = 888
+const DEFAULT_RANDOM_PRIZE_TAILS = [18, 38, 58, 68, 88] as const
+
+export function getRandomPrizeK(
+  options: { minK?: number; maxK?: number; tails?: readonly number[] } = {},
+) {
+  const minK = Math.floor(options.minK ?? DEFAULT_RANDOM_PRIZE_MIN_K)
+  const maxK = Math.floor(options.maxK ?? DEFAULT_RANDOM_PRIZE_MAX_K)
+  const tails = options.tails?.length ? options.tails : DEFAULT_RANDOM_PRIZE_TAILS
+
+  const low = Math.min(minK, maxK)
+  const high = Math.max(minK, maxK)
+
+  const maxBase = Math.floor(high / 100) + 1
+  const candidates: number[] = []
+
+  for (let base = 0; base <= maxBase; base += 1) {
+    for (const tail of tails) {
+      const value = base * 100 + Math.floor(tail)
+      if (value >= low && value <= high) {
+        candidates.push(value)
+      }
+    }
+  }
+
+  if (!candidates.length) {
+    return low
+  }
+
+  return candidates[Math.floor(Math.random() * candidates.length)]
+}
+
 const STORAGE_KEY = 'gg88-admin-prize-config'
 const ADMIN_USERNAME_KEY = 'gg88-admin-username'
 const ADMIN_PASSWORD_KEY = 'gg88-admin-password'
