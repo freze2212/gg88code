@@ -4,9 +4,11 @@ import { Turnstile } from '@marsidev/react-turnstile'
 import { Toaster, toast } from 'sonner'
 import './index.css'
 import './App.css'
+import Footer from './components/Footer'
+import Header from './components/Header'
+import { liveSiteUrl } from './lib/liveSite'
 import { getConfiguredPrize, getRandomPrizeK } from './lib/prizeConfig'
 
-const HOME_URL = 'https://gg88-cd-demo.pages.dev'
 const PROGRAM_INFO_URL = '#'
 const CODE_DISTRIBUTION_URL = 'https://t.me/code_gg88'
 const TELEGRAM_URL = 'https://t.me/GIAITRIGG88'
@@ -24,6 +26,7 @@ function App() {
   const [captchaToken, setCaptchaToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [errors, setErrors] = useState<FormErrors>({})
+  const contentRef = useRef<HTMLDivElement>(null)
 
   const TURNSTILE_SITE_KEY = import.meta.env.VITE_TURNSTILE_SITE_KEY as string | undefined
 
@@ -32,7 +35,12 @@ function App() {
       window.history.back()
       return
     }
-    window.location.href = HOME_URL
+    window.location.href = liveSiteUrl('/')
+  }
+
+  const focusEnterCodeForm = () => {
+    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+    document.getElementById('enter-code-account')?.focus({ preventScroll: true })
   }
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
@@ -69,176 +77,184 @@ function App() {
   return (
     <>
       <div className="enter-code-page flex min-h-dvh justify-center bg-[#f0f0f0]">
-        <main
-          className="relative flex min-h-dvh w-full max-w-[440px] flex-col bg-[#C9F7F3] bg-no-repeat pb-8 shadow-[0_0_24px_rgba(0,0,0,0.06)]"
-          style={{
-            backgroundImage: "url('/images/backgrounds/background3.png')",
-            backgroundSize: '100% auto',
-          }}
-        >
-          <div className="flex w-full flex-col items-center px-2.5 pt-2">
-            <div className="relative w-full shrink-0">
-              <div className="flex items-center justify-between gap-3 px-1">
-                <div className="min-w-0 text-left leading-snug text-[#25C4AF]">
-                  <p className="text-[13px] font-medium">Đối tác chính thức</p>
-                  <p className="text-[16px] font-bold">Athletic Club</p>
-                  <p className="text-[13px] font-medium">Năm 2026-2027</p>
-                </div>
-                <img
-                  src="/images/logos/logo4.png"
-                  alt="Athletic Club — GG88"
-                  width={964}
-                  height={184}
-                  className="h-auto w-[54%] max-w-[240px] shrink-0 object-contain"
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleBack}
-                aria-label="Quay lại"
-                className="absolute left-0.5 top-[calc(100%+0.25rem)] z-30 inline-flex size-9 cursor-pointer items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-transform active:scale-95"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="size-7"
-                  aria-hidden="true"
-                >
-                  <path d="m15 18-6-6 6-6" />
-                </svg>
-              </button>
-            </div>
-
-            <img
-              src="/images/mascots/mascot3.png"
-              alt="Nhập code GG88 Free"
-              width={1448}
-              height={1268}
-              className="relative z-20 mt-4 h-auto w-[72%] shrink-0 object-contain object-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.28)]"
-            />
-
-            <form
-              onSubmit={handleSubmit}
-              className="enter-code-board relative z-10 -mt-4 w-[92%] px-5 pb-4 pt-5 text-center"
-            >
-              <Field
-                id="enter-code-account"
-                label="Tên tài khoản"
-                placeholder="Nhập tên người dùng"
-                value={accountId}
-                error={errors.accountId}
-                onChange={(value) => {
-                  setAccountId(value)
-                  setErrors((prev) => ({ ...prev, accountId: undefined }))
-                }}
-              />
-
-              <Field
-                id="enter-code-code"
-                label="Mã code"
-                placeholder="Nhập mã code"
-                value={code}
-                error={errors.code}
-                className="mt-3.5"
-                onChange={(value) => {
-                  setCode(value)
-                  setErrors((prev) => ({ ...prev, code: undefined }))
-                }}
-              />
-
-              <div className="mt-3.5 min-w-0">
-                {TURNSTILE_SITE_KEY ? (
-                  <ScaledTurnstile>
-                    <Turnstile
-                      siteKey={TURNSTILE_SITE_KEY}
-                      onSuccess={(token) => {
-                        setCaptchaToken(token)
-                        setErrors((prev) => ({ ...prev, captcha: undefined }))
-                      }}
-                      onExpire={() => setCaptchaToken(null)}
-                      onError={() => setCaptchaToken(null)}
-                      options={{
-                        theme: 'light',
-                        size: 'normal',
-                        language: 'vi',
-                      }}
-                    />
-                  </ScaledTurnstile>
-                ) : (
-                  <p className="text-center text-[11px] text-[#FFD0A8]">
-                    Thiếu cấu hình xác thực Turnstile
-                  </p>
-                )}
-                {errors.captcha ? (
-                  <p className="mt-1 text-center text-[11px] text-[#FFD0A8]">{errors.captcha}</p>
-                ) : null}
-              </div>
-
-              <button
-                type="submit"
-                disabled={isLoading}
-                aria-label="Kiểm tra"
-                className={`mx-auto mt-3 block transition-[transform,filter] duration-200 hover:brightness-110 active:scale-[0.97] ${
-                  isLoading ? 'pointer-events-none opacity-60' : ''
-                }`}
-              >
-                <img
-                  src="/images/buttons/button1.png"
-                  alt="KIỂM TRA"
-                  width={216}
-                  height={78}
-                  className="h-auto w-[180px]"
-                />
-              </button>
-
-              <div className="mt-4 flex flex-col items-center gap-2.5">
-                <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
-                  <InfoLink href={PROGRAM_INFO_URL}>Thông tin chương trình</InfoLink>
-                  <InfoLink href={CODE_DISTRIBUTION_URL} external>
-                    Trang phát code
-                  </InfoLink>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-[13px] font-bold text-[#F0D78C]">Theo dõi thêm:</span>
-                  <a
-                    href={TELEGRAM_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Telegram"
-                    className="transition-transform duration-200 hover:scale-110"
-                  >
-                    <img
-                      src="/images/icons/icon7.png"
-                      alt=""
-                      width={22}
-                      height={22}
-                      className="size-[22px] rounded-full"
-                    />
-                  </a>
-                  <a
-                    href={FACEBOOK_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Facebook"
-                    className="transition-transform duration-200 hover:scale-110"
-                  >
-                    <img
-                      src="/images/icons/icon8.png"
-                      alt=""
-                      width={22}
-                      height={22}
-                      className="size-[22px] rounded-full"
-                    />
-                  </a>
-                </div>
-              </div>
-            </form>
+        <div className="relative flex h-dvh w-full max-w-[440px] flex-col bg-[#0F4E46] shadow-[0_0_24px_rgba(0,0,0,0.06)]">
+          <div className="relative z-20 shrink-0 bg-white">
+            <Header onEnterCodeClick={focusEnterCodeForm} />
           </div>
-        </main>
+          <div ref={contentRef} className="relative z-0 min-h-0 flex-1 overflow-y-auto overscroll-contain">
+            <main
+              className="relative flex min-h-full w-full flex-col bg-[#C9F7F3] bg-no-repeat pb-[calc(4.95rem+env(safe-area-inset-bottom))]"
+              style={{
+                backgroundImage: "url('/images/backgrounds/background3.png')",
+                backgroundSize: '100% auto',
+              }}
+            >
+              <div className="flex w-full flex-col items-center px-2.5 pt-2">
+                <div className="relative w-full shrink-0">
+                  <div className="flex items-center justify-between gap-3 px-1">
+                    <div className="min-w-0 text-left leading-snug text-[#25C4AF]">
+                      <p className="text-[13px] font-medium">Đối tác chính thức</p>
+                      <p className="text-[16px] font-bold">Athletic Club</p>
+                      <p className="text-[13px] font-medium">Năm 2026-2027</p>
+                    </div>
+                    <img
+                      src="/images/logos/logo4.png"
+                      alt="Athletic Club — GG88"
+                      width={964}
+                      height={184}
+                      className="h-auto w-[54%] max-w-[240px] shrink-0 object-contain"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    aria-label="Quay lại"
+                    className="absolute left-0.5 top-[calc(100%+0.25rem)] z-30 inline-flex size-9 cursor-pointer items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm transition-transform active:scale-95"
+                  >
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      className="size-7"
+                      aria-hidden="true"
+                    >
+                      <path d="m15 18-6-6 6-6" />
+                    </svg>
+                  </button>
+                </div>
+
+                <img
+                  src="/images/mascots/mascot3.png"
+                  alt="Nhập code GG88 Free"
+                  width={1448}
+                  height={1268}
+                  className="relative z-20 mt-4 h-auto w-[72%] shrink-0 object-contain object-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.28)]"
+                />
+
+                <form
+                  onSubmit={handleSubmit}
+                  className="enter-code-board relative z-10 -mt-4 w-[92%] px-5 pb-4 pt-5 text-center"
+                >
+                  <Field
+                    id="enter-code-account"
+                    label="Tên tài khoản"
+                    placeholder="Nhập tên người dùng"
+                    value={accountId}
+                    error={errors.accountId}
+                    onChange={(value) => {
+                      setAccountId(value)
+                      setErrors((prev) => ({ ...prev, accountId: undefined }))
+                    }}
+                  />
+
+                  <Field
+                    id="enter-code-code"
+                    label="Mã code"
+                    placeholder="Nhập mã code"
+                    value={code}
+                    error={errors.code}
+                    className="mt-3.5"
+                    onChange={(value) => {
+                      setCode(value)
+                      setErrors((prev) => ({ ...prev, code: undefined }))
+                    }}
+                  />
+
+                  <div className="mt-3.5 min-w-0">
+                    {TURNSTILE_SITE_KEY ? (
+                      <ScaledTurnstile>
+                        <Turnstile
+                          siteKey={TURNSTILE_SITE_KEY}
+                          onSuccess={(token) => {
+                            setCaptchaToken(token)
+                            setErrors((prev) => ({ ...prev, captcha: undefined }))
+                          }}
+                          onExpire={() => setCaptchaToken(null)}
+                          onError={() => setCaptchaToken(null)}
+                          options={{
+                            theme: 'light',
+                            size: 'normal',
+                            language: 'vi',
+                          }}
+                        />
+                      </ScaledTurnstile>
+                    ) : (
+                      <p className="text-center text-[11px] text-[#FFD0A8]">
+                        Thiếu cấu hình xác thực Turnstile
+                      </p>
+                    )}
+                    {errors.captcha ? (
+                      <p className="mt-1 text-center text-[11px] text-[#FFD0A8]">{errors.captcha}</p>
+                    ) : null}
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    aria-label="Kiểm tra"
+                    className={`mx-auto mt-3 block transition-[transform,filter] duration-200 hover:brightness-110 active:scale-[0.97] ${
+                      isLoading ? 'pointer-events-none opacity-60' : ''
+                    }`}
+                  >
+                    <img
+                      src="/images/buttons/button1.png"
+                      alt="KIỂM TRA"
+                      width={216}
+                      height={78}
+                      className="h-auto w-[180px]"
+                    />
+                  </button>
+
+                  <div className="mt-4 flex flex-col items-center gap-2.5">
+                    <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-1">
+                      <InfoLink href={PROGRAM_INFO_URL}>Thông tin chương trình</InfoLink>
+                      <InfoLink href={CODE_DISTRIBUTION_URL} external>
+                        Trang phát code
+                      </InfoLink>
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <span className="text-[13px] font-bold text-[#F0D78C]">Theo dõi thêm:</span>
+                      <a
+                        href={TELEGRAM_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Telegram"
+                        className="transition-transform duration-200 hover:scale-110"
+                      >
+                        <img
+                          src="/images/icons/icon7.png"
+                          alt=""
+                          width={22}
+                          height={22}
+                          className="size-[22px] rounded-full"
+                        />
+                      </a>
+                      <a
+                        href={FACEBOOK_URL}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label="Facebook"
+                        className="transition-transform duration-200 hover:scale-110"
+                      >
+                        <img
+                          src="/images/icons/icon8.png"
+                          alt=""
+                          width={22}
+                          height={22}
+                          className="size-[22px] rounded-full"
+                        />
+                      </a>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </main>
+          </div>
+          <Footer onEnterCodeClick={focusEnterCodeForm} />
+        </div>
       </div>
       <Toaster position="top-center" richColors />
     </>

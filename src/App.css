@@ -10,6 +10,35 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
+@keyframes header-btn-shine {
+  0% {
+    transform: translateX(-130%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(280%) skewX(-18deg);
+  }
+}
+
+.header-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  height: 100%;
+  width: 45%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.45) 50%, transparent 100%);
+  animation: header-btn-shine 2.2s ease-in-out infinite;
+}
+
+.footer-nav-icon-active {
+  filter: brightness(0) invert(82%) sepia(70%) saturate(900%) hue-rotate(2deg) brightness(104%) contrast(103%);
+}
+
+.footer-center-logo {
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.18));
+}
+
 .main-background {
   width: 100%;
   min-height: 100vh;
