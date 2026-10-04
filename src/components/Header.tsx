@@ -1,5 +1,3 @@
-import { liveSiteUrl } from '../lib/liveSite'
-
 const buttonClass =
   'header-btn relative inline-flex h-[26px] shrink-0 cursor-pointer items-center gap-1 overflow-hidden whitespace-nowrap rounded-full px-2.5 py-1 text-[13px] font-semibold tracking-[-0.4px] text-white transition-[filter,transform] duration-200 hover:brightness-110 active:scale-[0.96] active:brightness-95 min-[390px]:h-7 min-[390px]:px-3 min-[390px]:text-[14px] min-[420px]:h-[30px] min-[420px]:gap-[1.5px] min-[420px]:px-[15px] min-[420px]:py-[3.75px] min-[420px]:text-base min-[420px]:tracking-[-0.48px]'
 
@@ -42,11 +40,11 @@ function Header({ onEnterCodeClick }: HeaderProps) {
       />
 
       <div className="flex min-w-0 flex-1 justify-end">
-        <a href={liveSiteUrl('/dang-nhap')} className={buttonClass} style={buttonGradientStyle}>
+        <button type="button" className={buttonClass} style={buttonGradientStyle}>
           <span className="relative z-10" style={buttonTextStyle}>
             Đăng Nhập
           </span>
-        </a>
+        </button>
       </div>
     </header>
   )

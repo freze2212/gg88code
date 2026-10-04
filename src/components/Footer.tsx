@@ -1,8 +1,6 @@
 import { toast } from 'sonner'
-import { liveSiteUrl } from '../lib/liveSite'
 
 type NavItem = {
-  href?: string
   icon: string
   label: string
   width: number
@@ -10,10 +8,10 @@ type NavItem = {
 }
 
 const NAV_ITEMS = {
-  home: { href: liveSiteUrl('/'), icon: '/images/icons/icon2.png', label: 'Trang chủ', width: 29, height: 29 },
+  home: { icon: '/images/icons/icon2.png', label: 'Trang chủ', width: 29, height: 29 },
   enterCode: { icon: '/images/icons/icon3.png', label: 'Nhập code', width: 29, height: 29 },
-  live: { href: liveSiteUrl('/lives'), icon: '/images/icons/icon4.png', label: 'Live', width: 36, height: 28 },
-  profile: { href: liveSiteUrl('/profile'), icon: '/images/icons/icon5.png', label: 'Tài khoản', width: 29, height: 29 },
+  live: { icon: '/images/icons/icon4.png', label: 'Live', width: 36, height: 28 },
+  profile: { icon: '/images/icons/icon5.png', label: 'Tài khoản', width: 29, height: 29 },
 } satisfies Record<string, NavItem>
 
 type FooterProps = {
@@ -61,28 +59,16 @@ function NavIcon({
     />
   )
 
-  if (!item.href) {
-    return (
-      <button
-        type="button"
-        aria-label={item.label}
-        aria-current={active ? 'page' : undefined}
-        onClick={onClick}
-        className="flex h-full w-full cursor-pointer items-center justify-center pb-[env(safe-area-inset-bottom)] transition-transform duration-200 hover:-translate-y-0.5 active:scale-95"
-      >
-        {icon}
-      </button>
-    )
-  }
-
   return (
-    <a
-      href={item.href}
+    <button
+      type="button"
       aria-label={item.label}
-      className="relative flex h-full items-center justify-center pb-[env(safe-area-inset-bottom)] transition-transform duration-200 hover:-translate-y-0.5 active:scale-95"
+      aria-current={active ? 'page' : undefined}
+      onClick={onClick}
+      className="flex h-full w-full cursor-pointer items-center justify-center pb-[env(safe-area-inset-bottom)] transition-transform duration-200 hover:-translate-y-0.5 active:scale-95"
     >
       {icon}
-    </a>
+    </button>
   )
 }
 
